@@ -12,11 +12,19 @@ on:
       server:
         description: "DoH Server (Must support ECS)"
         required: true
-        default: 'https://dns.google/dns-query'
+        default: 'https://dns.alidns.com/dns-query'
       output:
         description: "output file"
         required: true
         default: './hosts'
+      ipv6:
+        description: "Enable IPv6 resolution (true/false)"
+        required: true
+        default: 'false'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
 
 jobs:
   run:
@@ -35,7 +43,12 @@ jobs:
           pip install -r requirements.txt
 
       - name: Run script
-        run: python dns_resolve.py -c ${{ github.event.inputs.cidr }} -s ${{ github.event.inputs.server }} -o ${{ github.event.inputs.output }}
+        run: |
+          if [ "${{ github.event.inputs.ipv6 }}" == "true" ]; then
+            python dns_resolve.py -c ${{ github.event.inputs.cidr }} -s ${{ github.event.inputs.server }} -o ${{ github.event.inputs.output }} -6
+          else
+            python dns_resolve.py -c ${{ github.event.inputs.cidr }} -s ${{ github.event.inputs.server }} -o ${{ github.event.inputs.output }}
+          fi
 
       - name: Commit Changes
         id: commit
