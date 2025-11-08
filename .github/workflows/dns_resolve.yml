@@ -20,7 +20,7 @@ on:
       ipv6:
         description: "Enable IPv6 resolution (true/false)"
         required: true
-        default: 'false'
+        default: 'true'
         type: choice
         options:
           - 'true'
